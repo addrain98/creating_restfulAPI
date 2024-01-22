@@ -5,100 +5,23 @@ require('dotenv').config();
 const router = express.Router();
 const COLLECTION = 'products';
 
-app.get("/",  async function (req, res) {
 
-    const { foodName, minCalories, maxCalories } = req.query;
-
-    let searchCriteria = {};
-
-    let searchByFoodNameOrTags = [];
-
-    if (foodName) {
-        searchByFoodNameOrTags.push({
-            "foodName": {
-                "$regex": foodName,
-                "$options": "i"
-            }
-        })
-        searchByFoodNameOrTags.push({
-            "tags": foodName
-        })
-
-        searchCriteria["$or"] = searchByFoodNameOrTags
-    }
-
-    if (minCalories || maxCalories) {
-        searchCriteria.calories = {};
-
-        if (minCalories) {
-            searchCriteria.calories["$gte"] = parseInt(minCalories);
-        }
-        if (maxCalories) {
-            searchCriteria.calories["$lte"] = parseInt(maxCalories);
-        }
-
-    }
-
-
-    // We want to retrieve the documents from the collections
-    // and convert it to an array of JSON objects
-    const foodRecords = await db.collection(COLLECTION)
-        .find(searchCriteria, {
-            'projection': {
-                'foodName': 1,
-                'tags': 1,
-                'calories': 1
-            }
-        })
-        .toArray();
-
-    res.json({
-        foodRecords
-    })
-})
-app.post("/food", authenticateToken, async function (req, res) {
+app.post("/", authenticateToken, async function (req, res) {
     // anything retrieved is from req.body is a string, not number
-    const foodName = req.body.foodName;
-    const calories = req.body.calories;
-
-    if (!foodName) {
-        res.status(400);
-        res.json({
-            "error":"Please enter foodname"
-        })
-        return; // end the function
-    }
-
-    if (isNaN(calories) || calories < 0) {
-        res.status(400);
-        res.json({
-            "error":"Please enter calories and make sure it is 0 or greater"
-        })
-        return; // end the function
-    }
-
-    let tags = req.body.tags;
-    if (tags) {
-        // check if tags is already an array or a string?
-        if (!Array.isArray(tags)) {
-            tags = [tags];
+    try {
+        const { name, uom, category, price } = req.body;
+    
+        // Validation
+        if (!name || !uom || !category || !price) {
+          return res.status(400).json({ message: 'Missing required fields' });
         }
-    } else {
-        // if tag is undefined set to an empty array (meaning no tags selected)
-        tags = [];
-    }
-
-    const results = await db.collection(COLLECTION).insertOne({
-        "foodName": foodName,
-        "calories": Number(calories),
-        "tags": tags
-    })
-
-    res.json({
-        "message": "Added successfully",
-        "results": results
-
-    })
+    
+        const newProduct = { name, uom, category, price };
+        const result = await db.collection('products').insertOne(newProduct);
+        res.status(201).json(result);
+      } catch (error) {
+        res.status(500).json({ message: 'Error adding new recipe', error: error.message });
+      }
 
 });
 

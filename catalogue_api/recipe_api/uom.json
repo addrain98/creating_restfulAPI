@@ -1,27 +1,27 @@
 [
-    {
-      "_id" : 1,
-      "type": "set",
-      "description": "solid",
-      "details": "5kg A and 5kg B"
-    },
-    {
-      "_id" : 2,
-      "type": "set",
-      "description": "liquid",
-      "details": "4L A and 4L B"
-    },
-    {
-      "_id": 3,
-      "type": "case",
-      "description": "1.9%",
-      "details": "4L per case"
-    },
-    {
-      "_id": 4,
-      "type": "case",
-      "description": "1.9%",
-      "details": "4L per case"
-    }
-  ]
+  {
+    "_id" : 1,
+    "type": "set",
+    "description": "solid",
+    "details": "5kg A and 5kg B"
+  },
+  {
+    "_id" : 2,
+    "type": "set",
+    "description": "liquid",
+    "details": "4L A and 4L B"
+  },
+  {
+    "_id": 3,
+    "type": "case",
+    "description": "1.9%",
+    "details": "4L per case"
+  },
+  {
+    "_id": 4,
+    "type": "case",
+    "description": "1.9%",
+    "details": "4L per case"
+  }
+]
   
