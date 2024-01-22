@@ -1,0 +1,31 @@
+[
+    {
+      "_id": 1,
+      "name": "Nutrient"
+    },
+    {
+      "_id": 2,
+      "name": "Chemical"
+    },
+    {
+      "_id": 3,
+      "name": "miscellanous"
+    },
+    {
+      "_id": 4,
+      "name": "Substrate"
+    },
+    {
+      "_id": 5,
+      "name": "Seed"
+    },
+    {
+      "_id": 6,
+      "name": "Seedling"
+    },
+    {
+      "_id": 7,
+      "name": "Tower"
+    }
+  ]
+  
