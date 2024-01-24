@@ -5,21 +5,21 @@ const { ObjectId } = require('mongodb');
 require('dotenv').config();
 const app = express()
 const router = express.Router();
-const COLLECTION = 'products';
+const COLLECTION = 'uom';
 
 
-app.post("/products", authenticateToken, async function (req, res) {
+app.post("/uom", authenticateToken, async function (req, res) {
     // anything retrieved is from req.body is a string, not number
     try {
-        const { name, uom, category, price } = req.body;
+        const { type, description, details } = req.body;
     
         // Validation
-        if (!name || !uom || !category || !price) {
+        if (!type || !description || !details) {
           return res.status(400).json({ message: 'Missing required fields' });
         }
     
-        const newProduct = { name, uom, category, price };
-        const result = await db.collection('products').insertOne(newProduct);
+        const newUom = { type, description, details };
+        const result = await db.collection('uom').insertOne(newUom);
         res.status(201).json(result);
       } catch (error) {
         res.status(500).json({ message: 'Error adding new product', error: error.message });
@@ -27,7 +27,7 @@ app.post("/products", authenticateToken, async function (req, res) {
 
 });
 
-app.get('/products', async (req, res) => {
+app.get('/uom', async (req, res) => {
     try {
         const products = await db.collection('products').find({}).toArray();
 
