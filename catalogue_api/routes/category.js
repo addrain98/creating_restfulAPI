@@ -3,12 +3,11 @@ const { getDB } = require('../mongoUtil');
 const { authenticateToken } = require('../middlewares');
 const { ObjectId } = require('mongodb');
 require('dotenv').config();
-const app = express()
 const router = express.Router();
 const COLLECTION = 'uom';
 
 
-app.post("/category", authenticateToken, async function (req, res) {
+router.post("/category", authenticateToken, async function (req, res) {
     // anything retrieved is from req.body is a string, not number
     try {
         const { name } = req.body;
@@ -19,7 +18,7 @@ app.post("/category", authenticateToken, async function (req, res) {
         }
     
         const newCategory = { name };
-        const result = await db.collection('category').insertOne(newCategory);
+        const result = await getDB().collection('category').insertOne(newCategory);
         res.status(201).json(result);
       } catch (error) {
         res.status(500).json({ message: 'Error adding new product', error: error.message });
@@ -27,19 +26,19 @@ app.post("/category", authenticateToken, async function (req, res) {
 
 });
 
-app.get('/category', async (req, res) => {
+router.get('/category', async (req, res) => {
     try {
-        const categories = await db.collection('category').find({}).toArray();
+        const categories = await getDB().collection('category').find({}).toArray();
         res.json(categories);
     } catch (error) {
         res.status(500).json({message: 'Error fetching category', error: error.message});
     }
 });
 
-app.delete("/category:id", async function (req, res) {
+router.delete("/category:id", async function (req, res) {
     try {
         const categoryId = req.params.id;
-        const result = await db.collection('category').deleteOne({_id: categoryId});
+        const result = await getDB().collection('category').deleteOne({_id: categoryId});
         if (result.deleteCount === 0 ) {
             return res.status(404).json({ message:"category not found"})
         }
@@ -51,7 +50,7 @@ app.delete("/category:id", async function (req, res) {
 });
 
 
-app.put("/category/:id", async function (req, res) { 
+router.put("/category/:id", async function (req, res) { 
     try {
      const categoryId = req.params.id;
      const { name } = req.body
@@ -64,7 +63,7 @@ app.put("/category/:id", async function (req, res) {
  
      const updateData = { name }; 
  
-     const result = await db.collection('name').updateOne(
+     const result = await getDB().collection('name').updateOne(
          { _id: objectId }, 
          { $set: updateData } 
      );

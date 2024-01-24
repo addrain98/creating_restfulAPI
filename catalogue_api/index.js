@@ -13,7 +13,6 @@ app.use(express.json());
 const { connect } = require("./mongoUtil");
 const { authenticateToken } = require('./middlewares');
 
-const COLLECTION = "foodRecords";
 const DB_NAME = process.env.DB_NAME;
 
 

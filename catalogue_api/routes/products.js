@@ -3,43 +3,44 @@ const { getDB } = require('../mongoUtil');
 const { authenticateToken } = require('../middlewares');
 const { ObjectId } = require('mongodb');
 require('dotenv').config();
-const app = express()
 const router = express.Router();
-const COLLECTION = 'products';
 
 
-app.post("/products", authenticateToken, async function (req, res) {
+router.post("/", async function (req, res) {
+    console.log("hii")
     // anything retrieved is from req.body is a string, not number
     try {
         const { name, uom, category, price } = req.body;
-    
+        console.log(req.body)
         // Validation
         if (!name || !uom || !category || !price) {
-          return res.status(400).json({ message: 'Missing required fields' });
+          res.status(400).json({ message: 'Missing required fields' });
+          return
         }
     
         const newProduct = { name, uom, category, price };
-        const result = await db.collection('products').insertOne(newProduct);
-        res.status(201).json(result);
-      } catch (error) {
+        const result = await getDB().collection('products').insertOne(newProduct);
+        res.json(result);
+    }  catch (error) {
         res.status(500).json({ message: 'Error adding new product', error: error.message });
       }
 
 });
 
-app.get('/products', async (req, res) => {
+router.get('/', async (req, res) => {
+    console.log("hello");
     try {
-        const products = await db.collection('products').find({}).toArray();
+        const products = await getDB().collection('products').find({}).toArray();
 
         // Fetch and map UOMs
         const uomIds = products.map(product => product.uom && product.uom._id).filter(id => id);
-        const uoms = await db.collection('uom').find({_id: {$in: uomIds}}).toArray();
+        const uoms = await getDB().collection('uom').find({_id: {$in: uomIds}}).toArray();
         const uomMap = {};
         uoms.forEach(uom => uomMap[uom._id] = uom);
 
         // Fetch and map Categories
         const categoryIds = products.reduce((acc, product) => acc.concat(product.category || []), []);
-        const categories = await db.collection('category').find({_id: {$in: categoryIds}}).toArray();
+        const categories = await getDB().collection('category').find({_id: {$in: categoryIds}}).toArray();
         const categoryMap = {};
         categories.forEach(category => categoryMap[category._id] = category);
 
@@ -54,7 +55,6 @@ app.get('/products', async (req, res) => {
         });
 
         res.json(products);
-
     } catch (error) {
         res.status(500).json({message: 'Error fetching products', error: error.message});
     }
@@ -77,10 +77,10 @@ app.get('/products', async (req, res) => {
 
 
 
-app.delete("/products:id", async function (req, res) {
+router.delete("/:id", async function (req, res) {
     try {
         const productId = req.params.id;
-        const result = await db.collection('products').deleteOne({_id: productId});
+        const result = await getDB().collection('products').deleteOne({_id: productId});
         if (result.deleteCount === 0 ) {
             return res.status(404).json({ message:"Product not found"})
         }
@@ -92,7 +92,7 @@ app.delete("/products:id", async function (req, res) {
 });
 
 
-app.put("/products/:id", async function (req, res) { 
+router.put("/:id", async function (req, res) { 
     try {
      const productId = req.params.id;
      const { name, uom, category, price } = req.body; 
@@ -105,7 +105,7 @@ app.put("/products/:id", async function (req, res) {
  
      const updateData = { name, uom, category, price }; 
  
-     const result = await db.collection('products').updateOne(
+     const result = await getDB().collection('products').updateOne(
          { _id: objectId }, 
          { $set: updateData } 
      );

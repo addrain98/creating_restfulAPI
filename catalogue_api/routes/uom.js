@@ -3,12 +3,11 @@ const { getDB } = require('../mongoUtil');
 const { authenticateToken } = require('../middlewares');
 const { ObjectId } = require('mongodb');
 require('dotenv').config();
-const app = express()
 const router = express.Router();
-const COLLECTION = 'uom';
 
 
-app.post("/uom", authenticateToken, async function (req, res) {
+
+router.post("/uom", authenticateToken, async function (req, res) {
     // anything retrieved is from req.body is a string, not number
     try {
         const { type, description, details } = req.body;
@@ -19,7 +18,7 @@ app.post("/uom", authenticateToken, async function (req, res) {
         }
     
         const newUom = { type, description, details };
-        const result = await db.collection('uom').insertOne(newUom);
+        const result = await getDB().collection('uom').insertOne(newUom);
         res.status(201).json(result);
       } catch (error) {
         res.status(500).json({ message: 'Error adding new product', error: error.message });
@@ -27,19 +26,19 @@ app.post("/uom", authenticateToken, async function (req, res) {
 
 });
 
-app.get('/uom', async (req, res) => {
+router.get('/uom', async (req, res) => {
     try {
-        const uoms = await db.collection('uom').find({}).toArray();
+        const uoms = await getDB().collection('uom').find({}).toArray();
         res.json(uoms);
     } catch (error) {
         res.status(500).json({message: 'Error fetching uom', error: error.message});
     }
 });
 
-app.delete("/uom:id", async function (req, res) {
+router.delete("/uom:id", async function (req, res) {
     try {
         const uomId = req.params.id;
-        const result = await db.collection('uom').deleteOne({_id: uomId});
+        const result = await getDB().collection('uom').deleteOne({_id: uomId});
         if (result.deleteCount === 0 ) {
             return res.status(404).json({ message:"UoM not found"})
         }
@@ -51,7 +50,7 @@ app.delete("/uom:id", async function (req, res) {
 });
 
 
-app.put("/uom/:id", async function (req, res) { 
+router.put("/uom/:id", async function (req, res) { 
     try {
      const uomId = req.params.id;
      const { type, description, details } = req.body
@@ -64,7 +63,7 @@ app.put("/uom/:id", async function (req, res) {
  
      const updateData = { type, description, details }; 
  
-     const result = await db.collection('products').updateOne(
+     const result = await getDB().collection('products').updateOne(
          { _id: objectId }, 
          { $set: updateData } 
      );
