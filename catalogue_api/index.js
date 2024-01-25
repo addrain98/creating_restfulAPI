@@ -3,6 +3,8 @@ const cors = require('cors'); // cross origin resources sharing
 const { ObjectId } = require('mongodb');
 const userRoutes = require("./routes/users");
 const productsRoutes = require("./routes/products")
+const categoryRoutes = require("./routes/category")
+const uomRoutes = require("./routes/uom")
 require("dotenv").config();
 
 const app = express();
@@ -26,6 +28,8 @@ async function main() {
     
 
     app.use('/products', productsRoutes)
+    app.use('/category', categoryRoutes)
+    app.use('/uom', uomRoutes)
     app.use('/users', userRoutes);
 
 }

@@ -7,7 +7,7 @@ const router = express.Router();
 
 
 
-router.post("/uom", authenticateToken, async function (req, res) {
+router.post("/",authenticateToken, async function (req, res) {
     // anything retrieved is from req.body is a string, not number
     try {
         const { type, description, details } = req.body;
@@ -26,7 +26,7 @@ router.post("/uom", authenticateToken, async function (req, res) {
 
 });
 
-router.get('/uom', async (req, res) => {
+router.get('/', async (req, res) => {
     try {
         const uoms = await getDB().collection('uom').find({}).toArray();
         res.json(uoms);
@@ -35,7 +35,7 @@ router.get('/uom', async (req, res) => {
     }
 });
 
-router.delete("/uom:id", async function (req, res) {
+router.delete("/:id", async function (req, res) {
     try {
         const uomId = req.params.id;
         const result = await getDB().collection('uom').deleteOne({_id: uomId});
@@ -50,7 +50,7 @@ router.delete("/uom:id", async function (req, res) {
 });
 
 
-router.put("/uom/:id", async function (req, res) { 
+router.put("/:id", async function (req, res) { 
     try {
      const uomId = req.params.id;
      const { type, description, details } = req.body
@@ -59,11 +59,11 @@ router.put("/uom/:id", async function (req, res) {
          return res.status(400).json({ message: 'Missing required fields' });
      }
  
-     const objectId = new ObjectId(productId); 
+     const objectId = new ObjectId(uomId); 
  
      const updateData = { type, description, details }; 
  
-     const result = await getDB().collection('products').updateOne(
+     const result = await getDB().collection('uom').updateOne(
          { _id: objectId }, 
          { $set: updateData } 
      );

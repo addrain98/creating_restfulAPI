@@ -7,9 +7,10 @@ const router = express.Router();
 const COLLECTION = 'uom';
 
 
-router.post("/category", authenticateToken, async function (req, res) {
+router.post("/",authenticateToken, async function (req, res) {
     // anything retrieved is from req.body is a string, not number
     try {
+        console.log("hii")
         const { name } = req.body;
     
         // Validation
@@ -26,16 +27,17 @@ router.post("/category", authenticateToken, async function (req, res) {
 
 });
 
-router.get('/category', async (req, res) => {
+router.get('/', async (req, res) => {
+    console.log("helloe")
     try {
-        const categories = await getDB().collection('category').find({}).toArray();
-        res.json(categories);
+        const category = await getDB().collection('category').find({}).toArray();
+        res.json(category);
     } catch (error) {
         res.status(500).json({message: 'Error fetching category', error: error.message});
     }
 });
 
-router.delete("/category:id", async function (req, res) {
+router.delete("/:id", async function (req, res) {
     try {
         const categoryId = req.params.id;
         const result = await getDB().collection('category').deleteOne({_id: categoryId});
@@ -50,7 +52,8 @@ router.delete("/category:id", async function (req, res) {
 });
 
 
-router.put("/category/:id", async function (req, res) { 
+router.put("/:id", async function (req, res) { 
+    console.log("hew")
     try {
      const categoryId = req.params.id;
      const { name } = req.body
@@ -63,7 +66,7 @@ router.put("/category/:id", async function (req, res) {
  
      const updateData = { name }; 
  
-     const result = await getDB().collection('name').updateOne(
+     const result = await getDB().collection('category').updateOne(
          { _id: objectId }, 
          { $set: updateData } 
      );

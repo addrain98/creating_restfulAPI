@@ -40,13 +40,8 @@ router.post('/login', async function (req, res) {
     // first argument of bcyrpt.compare: plaintext
     // second argument of bcrypt.compare: the hashed version
     if (user && await bcrypt.compare(req.body.password, user.password)) {
-        // user exists and the password given matches the hashed version
-        // create the token with jwt.sign
-        // 1st parameter: the data to store in the JWT (we must store some identifying information about the user)
-        // 2nd parameter: jwt secret
-        // 3rd parameter: the expiry
         const token = jwt.sign({
-            "_id": user._id
+            "_id": user._id,
         }, process.env.JWT_SECRET, {
             // can use `h` for hours `m` for minutes, `d` for days, `y` for years
             'expiresIn': '1h'
